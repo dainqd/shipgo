@@ -257,7 +257,7 @@ namespace Nop.Data
         /// Gets a table
         /// </summary>
         IQueryable<TEntity> Table { get; }
-
+        IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         #endregion
     }
 }

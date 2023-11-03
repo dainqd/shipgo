@@ -685,7 +685,10 @@ namespace Nop.Data
         /// Gets a table
         /// </summary>
         public virtual IQueryable<TEntity> Table => _dataProvider.GetTable<TEntity>();
-
+        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        {
+            return AddDeletedFilter(Table, true).Where(predicate);
+        }
         #endregion
     }
 }

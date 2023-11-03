@@ -2867,24 +2867,17 @@ namespace Nop.Services.Catalog
             // return _productRepository.All.Where(p => p.Published && !p.Deleted);
         }
 
-        public virtual async Task<IList<ProductWithDetails>> GetAllProductsDisplayed()
+		public IEnumerable<Product> GetAllProductByCategory(int categoryId)
         {
-           var productsWithDetails = await _productRepository.GetAllAsync(query =>
-           {
-               return from p in query
-                      join pcm in _productCategoryMappingRepository.Table on p.Id equals pcm.ProductId
-                      join c in _categoryRepository.Table on pcm.CategoryId equals c.Id
-                      where p.Published && !p.Deleted && p.ShowOnHomepage
-                      orderby p.DisplayOrder, p.Id
-                      select new ProductWithDetails
-                      {
-                          Product = p,
-                          Category = c,
-                          ProductPictures = _productPictureRepository.Table.Where(pp => pp.ProductId == p.Id).ToList()
-                      };
-           }, cache => cache.PrepareKeyForDefaultCache(NopCatalogDefaults.ProductsHomepageCacheKey));
-       
-           return productsWithDetails.ToList();
+            var productCategories = _productCategoryRepository
+                .Where(pc => pc.CategoryId == categoryId)
+                .Select(pc => pc.ProductId)
+                .ToList();
+
+        	var products = _productRepository
+    			.Where(p => productCategories.Contains(p.Id) && p.Published && !p.Deleted)
+    			.ToList();
+			return products;
         }
     }
 }

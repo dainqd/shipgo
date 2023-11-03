@@ -977,7 +977,6 @@ namespace Nop.Services.Catalog
         #endregion
         
         IEnumerable<Product> GetAll();
-
-		Task<IList<ProductWithDetails>> GetAllProductsDisplayed();
+        IEnumerable<Product> GetAllProductByCategory(int categoryId);
     }
 }
