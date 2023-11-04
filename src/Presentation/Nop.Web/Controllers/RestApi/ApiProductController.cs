@@ -9,6 +9,7 @@ using Nop.Core.Domain.Catalog;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using Nop.Core;
 using Nop.Core.Domain.Media;
 using Nop.Services.Media;
 
@@ -21,18 +22,21 @@ namespace Nop.Web.Controllers.RestApi
     public class ApiProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IProductAttributeService _productAttributeService;
         private readonly IPictureService _pictureService;
         private readonly ICategoryService _categoryService;
         private readonly ILogger<ApiProductController> _logger;
 
         public ApiProductController(
             IProductService productService, 
+            IProductAttributeService productAttributeService,
             ICategoryService categoryService,
             IPictureService pictureService,
             ILogger<ApiProductController> logger
             )
         {
             _productService = productService;
+            _productAttributeService = productAttributeService;
             _categoryService = categoryService;
             _pictureService = pictureService;
             _logger = logger;
@@ -112,6 +116,27 @@ namespace Nop.Web.Controllers.RestApi
         {
             var products = _productService.GetAllProductByCategory(id);
             return Ok(products);
+        }
+        
+        [HttpGet("attributes")]
+        public Task<IPagedList<ProductAttribute>> GetAllProductAttributesAsync()
+        {
+            var attributes = _productAttributeService.GetAllProductAttributesAsync();
+            return attributes;
+        }
+        
+        [HttpGet("product-attributes/{productID}")]
+        public Task<IList<ProductAttributeMapping>> GetProductAttributeMappingsByProductIdAsync(int productID)
+        {
+            var productAttributes = _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productID);
+            return productAttributes;
+        }
+        
+        [HttpGet("product-attribute-value/{productAttributeID}")]
+        public Task<IList<ProductAttributeValue>> GetProductAttributeValuesAsync(int productAttributeID)
+        {
+            var productAttributeValue = _productAttributeService.GetProductAttributeValuesAsync(productAttributeID);
+            return productAttributeValue;
         }
     }
 }
